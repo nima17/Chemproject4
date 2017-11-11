@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //init image
         image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
-
+        mImageView = (ImageView) findViewById(R.id.mImageView);
         //This initliasies the  Tesseract API
         String language = "eng";
         datapath = getFilesDir()+ "/tesseract/";
