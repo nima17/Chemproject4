@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".Tesseract"
     android:weightSum="1">
 
     <RelativeLayout
@@ -70,6 +70,7 @@
             android:textSize="18dp"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
+
 
     </RelativeLayout>
 </LinearLayout>
