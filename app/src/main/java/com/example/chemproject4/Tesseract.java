@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,14 +62,20 @@ public class Tesseract extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ImageView_molecule = (ImageView)findViewById(R.id.mImageView);
 
-        RelativeLayout b = (RelativeLayout) findViewById(R.id.OCRButtonContainer);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
+        final Button Process_Image_Button = (Button) findViewById(R.id.OCRbutton);
+        final Button Take_Photo_Button = (Button) findViewById(R.id.Capture_Photo);
+
+        Process_Image_Button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                processImage(v);
+                processImage();
             }
         });
-        //init image
+        Take_Photo_Button.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                dispatchTakePictureIntent();
+            }
+        });
+        //Define image,
         image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
 
         //initialize Tesseract API
@@ -83,7 +90,7 @@ public class Tesseract extends AppCompatActivity {
 
 
 
-    public void processImage(View view ){
+    public void processImage( ){
         String OCRresult;
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
@@ -156,7 +163,7 @@ public class Tesseract extends AppCompatActivity {
     }
 
     //Creating an intent to launch phones camera app part
-    public void dispatchTakePictureIntent(View view) throws IOException {
+    public void dispatchTakePictureIntent()  {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {

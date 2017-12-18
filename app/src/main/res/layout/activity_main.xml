@@ -38,14 +38,13 @@
         android:background="#167865"
         android:clickable="true">
 
-        <TextView
+        <Button
             android:id="@+id/OCRbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/Capture_Photo"
             android:layout_centerHorizontal="true"
             android:clickable="true"
-            android:onClick="processImage"
             android:text="Run recogntion on Molecule"
             android:textSize="18dp" />
 
