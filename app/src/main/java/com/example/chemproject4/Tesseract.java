@@ -245,7 +245,7 @@ public class Tesseract extends AppCompatActivity {
     public void shrink_bitmap( ) {
         BitmapFactory.Options option = new BitmapFactory.Options();
 
-       Bitmap_Molecule = BitmapFactory.decodeFile(mCurrentPhotoPath) ;// todo, doesnt create bitmap properly
+       Bitmap_Molecule = BitmapFactory.decodeFile(mCurrentPhotoPath) ;
        Log.d("image file", mCurrentPhotoPath);
 
 
