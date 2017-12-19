@@ -52,8 +52,8 @@
             android:id="@+id/Capture_Photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/OCRbutton"
             android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:onClick="dispatchTakePictureIntent"
             android:text="Take Photo Of Next Molecule" />
     </RelativeLayout>

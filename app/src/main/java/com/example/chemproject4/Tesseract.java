@@ -49,6 +49,7 @@ import java.util.concurrent.Delayed;
 
 public class Tesseract extends AppCompatActivity {
     String datapath = "";
+    boolean photo_taken= false;
     ///ImageView mImageView;
 
     Bitmap image;
@@ -56,6 +57,7 @@ public class Tesseract extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
     public String mCurrentPhotoPath;
     private ImageView ImageView_molecule;
+    public Bitmap Bitmap_Molecule;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,7 @@ public class Tesseract extends AppCompatActivity {
         Take_Photo_Button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 dispatchTakePictureIntent();
+
             }
         });
         //Define image,
@@ -91,6 +94,19 @@ public class Tesseract extends AppCompatActivity {
 
 
     public void processImage( ){
+        if (photo_taken ){ // checks if photo_take is equal to true, thus should set bitmap to image taken
+            try {
+                image = Bitmap_Molecule;
+                if (image== null) {
+                    Toast.makeText(getApplicationContext(), "error code to be made, bitmap is null!", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+            catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "error code to be made, error occured in converting photo taken to bitmap,", Toast.LENGTH_SHORT).show();
+            }
+        }
+
         String OCRresult;
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
@@ -185,6 +201,8 @@ public class Tesseract extends AppCompatActivity {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
                 Toast.makeText( getApplicationContext(), photoURI.toString(), Toast.LENGTH_LONG).show();
+                photo_taken = true;
+
             }
         }
         else {
@@ -213,21 +231,20 @@ public class Tesseract extends AppCompatActivity {
 
 
     }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { // Checks if camera intent is completed, then it will compress bitmap.
         // Check which request we're responding to
         if (requestCode == REQUEST_TAKE_PHOTO) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                shrink_bitmap(mCurrentPhotoPath);
+                shrink_bitmap();
             }
         }
     }
 
 
-    public void shrink_bitmap( String Photo_file_path) {
+    public void shrink_bitmap( ) {
         BitmapFactory.Options option = new BitmapFactory.Options();
 
-       Bitmap Bitmap_Molecule = null;
        Bitmap_Molecule = BitmapFactory.decodeFile(mCurrentPhotoPath) ;// todo, doesnt create bitmap properly
        Log.d("image file", mCurrentPhotoPath);
 
@@ -236,12 +253,12 @@ public class Tesseract extends AppCompatActivity {
         if (Bitmap_Molecule != null) { // Checks if bitmap has been created,
             int target_width = ImageView_molecule.getMeasuredWidth(); /// No error
             int target_height = ImageView_molecule.getMeasuredHeight(); /// No error
-/*            Log.d("Test Width", "" + target_width); // for error checking
+            Log.d("Test Width", "" + target_width); // for error checking
             Log.d("Test Height", Integer.toString(target_height));
-            Log.d("image file", file_path);
+            Log.d("image file",mCurrentPhotoPath);
             Log.d("image", Bitmap_Molecule.toString());
             Log.d("btimap", "bitmap created");
- */
+
             Bitmap Bitmap_Molecule_compressed = Bitmap.createScaledBitmap(Bitmap_Molecule, target_width, target_height, false);
             Toast.makeText(getApplicationContext(), "Photo successfully compressed!", Toast.LENGTH_SHORT).show();
             ImageView_molecule.setImageBitmap(Bitmap_Molecule_compressed);
