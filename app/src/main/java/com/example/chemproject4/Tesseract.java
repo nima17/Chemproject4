@@ -79,7 +79,7 @@ public class Tesseract extends AppCompatActivity {
             }
         });
         //Define image,
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.ethene);
 
         //initialize Tesseract API
         String language = "eng";
@@ -110,21 +110,10 @@ public class Tesseract extends AppCompatActivity {
         String OCRresult;
         mTess.setImage(image);
         OCRresult = mTess.getUTF8Text();
-
-        try {
-            String filename = "HOCR_Output_From_Photo";
-            String HOcr_output = mTess.getHOCRText(1);
-            Context context = getApplicationContext();
-            FileOutputStream outputStream;
-            outputStream = openFileOutput(filename, context.MODE_PRIVATE);
-            outputStream.write(HOcr_output.getBytes());
-            outputStream.close();
-            Toast.makeText(getApplicationContext(), HOcr_output, Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error code to be made, error while saving HOCR File " , Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-
-        }
+        Log.d("UTF8 TEXT", OCRresult);
+        Log.d("Box text", mTess.getBoxText(1));
+        Log.d("hocr box", mTess.getHOCRText(1));
+        string_to_array();
 
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
         OCRTextView.setText(OCRresult);
@@ -147,7 +136,16 @@ public class Tesseract extends AppCompatActivity {
         }
 
     }
+    private void string_to_array(){
+        String str = mTess.getBoxText(1);
+        str = str.replaceAll(" 1\n", " \n");// Removes the last 1 from each line of the string
+        Log.d("string without spaces", str);
+        String str_splitted[] = str.split(" ");
+        for (int i = 0; i<str_splitted.length; i++){
+            Log.d("" , str_splitted[i]);
+        }
 
+    }
 
     private void copyFiles() {
         try {
