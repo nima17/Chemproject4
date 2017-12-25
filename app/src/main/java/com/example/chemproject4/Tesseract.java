@@ -15,8 +15,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.Boolean;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,14 +35,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.opencsv.CSVReader;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.io.File;
+import java.util.Date;
+import java.util.StringTokenizer;
+
+import jxl.*;
+import jxl.read.biff.BiffException;
+import jxl.write.WritableWorkbook;
+import jxl.write.*;
 
 import static java.lang.StrictMath.abs;
 
@@ -44,9 +60,12 @@ public class Tesseract extends AppCompatActivity {
 
     //String[]  letter = new String[10000];
     //int[]     avgX   = new int[10000];
+    File Workbook;
     ArrayList<String> letter = new ArrayList<String>();
     ArrayList<Integer> avgX = new ArrayList<Integer>();
     ArrayList<Integer> avgY = new ArrayList<Integer>();
+    Map<String, String> formulaToName = new HashMap<>();
+
     String datapath = "";
     boolean photo_taken= false;
     ///ImageView mImageView;
@@ -68,7 +87,11 @@ public class Tesseract extends AppCompatActivity {
 
         Process_Image_Button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                processImage();
+                try {
+                    processImage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         Take_Photo_Button.setOnClickListener(new View.OnClickListener(){
@@ -92,7 +115,7 @@ public class Tesseract extends AppCompatActivity {
 
 
 
-    public void processImage( ){
+    public void processImage( ) throws IOException {
         letter.clear();
         avgY.clear();
         avgX.clear();
@@ -139,7 +162,7 @@ public class Tesseract extends AppCompatActivity {
         }
 
     }
-    private void string_to_array(){
+    private void string_to_array() throws IOException {
 
         String str = mTess.getBoxText(1);
         str = str.replaceAll(" 1\n", " ");// Removes the last 1 from each line of the string
@@ -269,7 +292,9 @@ public class Tesseract extends AppCompatActivity {
 
         Log.d("equation", equation);
        // Map<Character, Integer> counting = new HashMap<Character, Integer>();
+        workbook_searcher();
 
+        Log.d("name", formulaToName.get(equation));
     }
     public void Bubblesort(ArrayList<Integer> avgX, ArrayList<String> Letter , ArrayList<Integer> avgY ) {
         int i = 0, n = avgX.size();
@@ -319,8 +344,118 @@ public class Tesseract extends AppCompatActivity {
         }
 
 
+/*
+    public void excel_importer(){
+            String filepath = "database.xls";
+            File workbook_file = new File("database.xls");
+            if (workbook_file.exists()){
+                Log.d("workbook_file_exsists", "true");
+            }
+            else {
+                Log.d("workbook_file_exsists", "FALSE, DOESNT EXIST!");
+
+            }
+
+        AssetManager assetManager = getAssets();
+        InputStream is = null;
+
+        try {
+            is = assetManager.open("database.csv");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        BufferedReader reader = null;
+        reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+
+        String line = "";
+        StringTokenizer st = null;
+        try {
+
+            while ((line = reader.readLine()) != null) {
+                st = new StringTokenizer(line, ",");
+                YourSimpleObject obj= new YourSimpleObject ();
+                //your attributes
+                obj.setX(st.nextToken());
+                obj.setY(st.nextToken());
+                obj.setZ(st.nextToken());
+                obj.setW(st.nextToken());
+
+                objList.add(sQuestion);
+
+            }
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
 
 
+
+    } */
+
+
+    private void workbook_searcher() throws IOException {
+        try {
+            AssetManager mng = getApplicationContext().getAssets();
+            InputStream is = mng.open("database.csv");
+            ///InputStream is = getAssets().open("database.csv");
+            //String csvFilename = "/assets/database.csv";
+            // Log.d("filedir", String.valueOf(getFilesDir()));
+
+
+            CSVReader csv = new CSVReader(new InputStreamReader(is));
+            String[] s;
+
+
+            while ((s = csv.readNext()) != null) {
+                Log.d((s[0]), s[1]);
+                formulaToName.put(s[0], s[1]);
+            }
+            csv.close();
+        } catch(IOException ioe){
+            Log.e("File Read Error: ","" + ioe.getMessage());
+        }
+
+
+
+        /*String[] row = null;
+        while((row = csvReader.readNext()) != null) {
+            System.out.println(row[0]
+                    + " # " + row[1]
+                    + " #  " + row[2]);
+        }
+//...
+        csvReader.close();*/
+    }
+///            File inputWorkbook = new File(filepath);
+            //File inputWorkbook = new File(getClassLoader().getResource("file/database.xlsx").getFile());
+/*            if(inputWorkbook.exists()){
+                Workbook w = null;
+                try {
+                    Log.d("woorkbook import ", "on");
+                    w = w.getWorkbook(inputWorkbook);
+                    Sheet sheet = w.getSheet(0);
+                    // Loop over column and lines
+                    for (int j = 0; j < sheet.getRows(); j++) {
+                        Cell cell0 = sheet.getCell(0, j);
+                        String data0 = cell0.getContents();
+
+                        Cell cell1 = sheet.getCell(1, j);
+                        String data1 = cell1.getContents();
+
+                        Log.d("data0", data0);
+                        Log.d("data1", data1);
+                    }
+                } catch (IOException e) {
+                    Log.d("error workbook importer", "error");
+                    e.printStackTrace();
+                } catch (BiffException e) {
+                    Log.d("error workbook importer", "error");
+                    e.printStackTrace();
+                }
+        }
+    }*/
     private void copyFiles() {
         try {
 
