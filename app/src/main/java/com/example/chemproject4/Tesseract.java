@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -46,8 +47,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.Delayed;
+import java.util.AbstractList;
 
 public class Tesseract extends AppCompatActivity {
+
+    //String[]  letter = new String[10000];
+    //int[]     avgX   = new int[10000];
+    ArrayList<String> letter = new ArrayList<String>();
+    ArrayList<Integer> avgX = new ArrayList<Integer>();
     String datapath = "";
     boolean photo_taken= false;
     ///ImageView mImageView;
@@ -141,11 +148,106 @@ public class Tesseract extends AppCompatActivity {
         str = str.replaceAll(" 1\n", " \n");// Removes the last 1 from each line of the string
         Log.d("string without spaces", str);
         String str_splitted[] = str.split(" ");
-        for (int i = 0; i<str_splitted.length; i++){
+        Log.d("length", String.valueOf(str_splitted.length));
+        for (int i = 0; i<(str_splitted.length-1); i+=5){ /// gets an array of letters and the avg x value of letter/
+            boolean checker = true;
             Log.d("" , str_splitted[i]);
+            ///Log.d("i" , String.valueOf(i));
+            Log.d("arrary value", String.valueOf(str_splitted[i].charAt(0)));
+            String I = "I";
+            if (str_splitted[i].equals(I) ){ //todo fix the checking of I, =, -, / \
+                checker = false;
+
+            }
+            if (checker == true){
+                letter.add(str_splitted[i]);
+                avgX.add((Integer.parseInt(str_splitted[i+1])+Integer.parseInt(str_splitted[i+3]))/2);
+
+                Log.d("Letter", String.valueOf(letter.get(i/5)));
+                Log.d("avgX", String.valueOf(avgX.get(i/5)));
+
+            }
+        }
+
+        Bubblesort(avgX, letter);
+
+
+
+/*        Log.d("avgx1", String.valueOf(avgX[1]));
+        Log.d("avgx2", String.valueOf(avgX[2]));
+        Log.d("avgx3", String.valueOf(avgX[3]));
+        Log.d("avgx4", String.valueOf(avgX[4]));
+        Log.d("avgx5", String.valueOf(avgX[5]));
+        Log.d("avgx6", String.valueOf(avgX[6]));*/
+        Log.d("bubble sort", "occrued");
+        for(int i = 0; i<avgX.size(); i++){
+            Log.d("avgx", String.valueOf(avgX.get(i)));
+        }
+        for(int i = 0; i<letter.size(); i++){
+            Log.d("letter", letter.get(i));
+        }
+        //Log.d("avgx", String.valueOf(avgX));
+        //Log.d("letter", String.valueOf(letter));
+
+        ArrayList<Integer> grouping  = new ArrayList<Integer>();
+        for(int i = 0; i < letter.size() - 1; i++) {
+            if (avgX.get(i + 1) - avgX.get(i) < 30) {
+                continue;
+            } else {
+                grouping.add(i);
+            }
+        }
+        int i = letter.size() - 1;
+        if (avgX.get(i) - avgX.get(i - 1) >= 30) {
+            grouping.add(i);
         }
 
     }
+    public void Bubblesort(ArrayList<Integer> avgX, ArrayList<String> Letter ) {
+        int i = 0, n = avgX.size();
+        boolean swapNeeded = true;
+        while (i < n - 1 && swapNeeded) {
+            swapNeeded = false;
+            for (int j = 1; j < n - i; j++) {
+                if (avgX.get(j - 1) > avgX.get(j)) {
+                    int temp = avgX.get(j - 1);
+                    avgX.set(j - 1, avgX.get(j));
+                    avgX.set(j, temp);
+
+                    String Letter_temp = Letter.get(j - 1);
+                    Letter.set(j - 1, Letter.get(j));
+                    Letter.set(j, Letter_temp);
+                    swapNeeded = true;
+                }
+            }
+            if(!swapNeeded) {
+                break;
+            }
+            i++;
+        }
+    }
+    public void get_grouping(ArrayList<Integer> avgX, ArrayList<String> Letter){
+
+        int i = 0, n = avgX.size();
+        while (i < n - 1 ) {
+            for (int j = 1; j < n - i; j++) {
+                if (avgX.get(j) - avgX.get(j - 1) < 30) {
+                    int temp = avgX.get(j - 1);
+                    avgX.set(j - 1, avgX.get(j));
+                    avgX.set(j, temp);
+
+                    String Letter_temp = Letter.get(j - 1);
+                    Letter.set(j - 1, Letter.get(j));
+                    Letter.set(j, Letter_temp);
+                }
+            }
+
+            }
+            i++;
+        }
+
+
+
 
     private void copyFiles() {
         try {
