@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.StrictMath.abs;
 
@@ -92,6 +93,10 @@ public class Tesseract extends AppCompatActivity {
 
 
     public void processImage( ){
+        letter.clear();
+        avgY.clear();
+        avgX.clear();
+
         if (photo_taken ){ // checks if photo_take is equal to true, thus should set bitmap to image taken
             try {
                 image = Bitmap_Molecule;
@@ -135,6 +140,7 @@ public class Tesseract extends AppCompatActivity {
 
     }
     private void string_to_array(){
+
         String str = mTess.getBoxText(1);
         str = str.replaceAll(" 1\n", " ");// Removes the last 1 from each line of the string
         Log.d("string without spaces", str);
@@ -243,13 +249,22 @@ public class Tesseract extends AppCompatActivity {
                }
            }
 
-            for (Map.Entry<String, Integer> entry : counting.entrySet())
-            {
-                subEquation = subEquation + entry.getKey() + entry.getValue().toString();
-                //System.out.println(entry.getKey() + "/" + entry.getValue());
+            Integer hCount = counting.get("H");
+            if (hCount != null) {
+                if (hCount > 0) {
+                    subEquation = subEquation + "H" + String.valueOf(hCount);
+                }
+                for (Map.Entry<String, Integer> entry : counting.entrySet()) {
+                    if (Objects.equals(entry.getKey(), "H")) {
+                        continue;
+                    }
+
+                    subEquation = subEquation + entry.getKey() + entry.getValue().toString();
+                    //System.out.println(entry.getKey() + "/" + entry.getValue());
+                }
+                //Log.d("equation", subEquation);
+                equation += subEquation;
             }
-            //Log.d("equation", subEquation);
-            equation += subEquation;
         }
 
         Log.d("equation", equation);
