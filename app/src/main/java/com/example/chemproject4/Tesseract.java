@@ -136,7 +136,7 @@ public class Tesseract extends AppCompatActivity {
     }
     private void string_to_array(){
         String str = mTess.getBoxText(1);
-        str = str.replaceAll(" 1\n", " \n");// Removes the last 1 from each line of the string
+        str = str.replaceAll(" 1\n", " ");// Removes the last 1 from each line of the string
         Log.d("string without spaces", str);
         String str_splitted[] = str.split(" ");
         Log.d("length", String.valueOf(str_splitted.length));
@@ -145,12 +145,8 @@ public class Tesseract extends AppCompatActivity {
             boolean checker = true;
             Log.d("i", String.valueOf(i));
             Log.d("" , str_splitted[i]);
-            int letter_location = 1;
-            if (i == 0) {
-                letter_location = 0;
-            }
 
-            char ascLetter = str_splitted[i].charAt(letter_location);
+            char ascLetter = str_splitted[i].charAt(0);
             if (ascLetter == 'I' || ascLetter == '='  || ascLetter == '-' || ascLetter == '/' || ascLetter == '\\') {
                 checker = false;
                 itemDeleted++;
@@ -219,16 +215,17 @@ public class Tesseract extends AppCompatActivity {
             Log.d("grouping", String.valueOf(grouping.get(k)));
         }
 
+        String equation = "";
         for(int m = 0; m<grouping.size(); m++){
             int leftIdx = 0;
             if (m > 0) {
                 leftIdx = grouping.get(m - 1) + 1;
             }
 
-            String equation = "";
+            String subEquation = "";
             for (int n = leftIdx; n <= grouping.get(m); n++) {
                 if (Middle_element.get(n) == true) {
-                    equation = letter.get(n);
+                    subEquation = letter.get(n);
                     break;
                 }
             }
@@ -248,13 +245,14 @@ public class Tesseract extends AppCompatActivity {
 
             for (Map.Entry<String, Integer> entry : counting.entrySet())
             {
-                equation = equation + entry.getKey() + entry.getValue().toString();
+                subEquation = subEquation + entry.getKey() + entry.getValue().toString();
                 //System.out.println(entry.getKey() + "/" + entry.getValue());
             }
-
-            Log.d("equation", equation);
+            //Log.d("equation", subEquation);
+            equation += subEquation;
         }
 
+        Log.d("equation", equation);
        // Map<Character, Integer> counting = new HashMap<Character, Integer>();
 
     }
