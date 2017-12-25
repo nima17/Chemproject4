@@ -55,6 +55,7 @@ public class Tesseract extends AppCompatActivity {
     //int[]     avgX   = new int[10000];
     ArrayList<String> letter = new ArrayList<String>();
     ArrayList<Integer> avgX = new ArrayList<Integer>();
+    ArrayList<Integer> avgY = new ArrayList<Integer>();
     String datapath = "";
     boolean photo_taken= false;
     ///ImageView mImageView;
@@ -125,7 +126,7 @@ public class Tesseract extends AppCompatActivity {
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
         OCRTextView.setText(OCRresult);
 
-    } // todo, get line detection
+    }
 
     private void checkFile(File dir) { /// Checks if the tess two directory exists on phone before copying data to it, if doesnt exist will create directory.
 
@@ -149,36 +150,32 @@ public class Tesseract extends AppCompatActivity {
         Log.d("string without spaces", str);
         String str_splitted[] = str.split(" ");
         Log.d("length", String.valueOf(str_splitted.length));
+        int itemDeleted = 0;
         for (int i = 0; i<(str_splitted.length-1); i+=5){ /// gets an array of letters and the avg x value of letter/
             boolean checker = true;
+            Log.d("i", String.valueOf(i));
             Log.d("" , str_splitted[i]);
-            ///Log.d("i" , String.valueOf(i));
-            Log.d("arrary value", String.valueOf(str_splitted[i].charAt(0)));
-            String I = "I";
-            if (str_splitted[i].equals(I) ){ //todo fix the checking of I, =, -, / \
-                checker = false;
+            int letter_location = 1;
+            if (i == 0) {
+                letter_location = 0;
+            }
 
+            char ascLetter = str_splitted[i].charAt(letter_location);
+            if (ascLetter == 'I' || ascLetter == '='  || ascLetter == '-' || ascLetter == '/' || ascLetter == '\\') {
+                checker = false;
+                itemDeleted++;
             }
             if (checker == true){
                 letter.add(str_splitted[i]);
                 avgX.add((Integer.parseInt(str_splitted[i+1])+Integer.parseInt(str_splitted[i+3]))/2);
-
-                Log.d("Letter", String.valueOf(letter.get(i/5)));
-                Log.d("avgX", String.valueOf(avgX.get(i/5)));
+                avgY.add((Integer.parseInt(str_splitted[i+2])+Integer.parseInt(str_splitted[i+4]))/2);
+                Log.d("Letter", String.valueOf(letter.get((i/5) - itemDeleted)));
+                Log.d("avgX", String.valueOf(avgX.get((i/5) - itemDeleted)));
 
             }
         }
 
-        Bubblesort(avgX, letter);
-
-
-
-/*        Log.d("avgx1", String.valueOf(avgX[1]));
-        Log.d("avgx2", String.valueOf(avgX[2]));
-        Log.d("avgx3", String.valueOf(avgX[3]));
-        Log.d("avgx4", String.valueOf(avgX[4]));
-        Log.d("avgx5", String.valueOf(avgX[5]));
-        Log.d("avgx6", String.valueOf(avgX[6]));*/
+        Bubblesort(avgX, letter, avgY);
         Log.d("bubble sort", "occrued");
         for(int i = 0; i<avgX.size(); i++){
             Log.d("avgx", String.valueOf(avgX.get(i)));
@@ -202,8 +199,11 @@ public class Tesseract extends AppCompatActivity {
             grouping.add(i);
         }
 
+        for(int k = 0; k<grouping.size(); k++){
+            Log.d("grouping", String.valueOf(grouping.get(k)));
+        }
     }
-    public void Bubblesort(ArrayList<Integer> avgX, ArrayList<String> Letter ) {
+    public void Bubblesort(ArrayList<Integer> avgX, ArrayList<String> Letter , ArrayList<Integer> avgY ) {
         int i = 0, n = avgX.size();
         boolean swapNeeded = true;
         while (i < n - 1 && swapNeeded) {
@@ -217,6 +217,10 @@ public class Tesseract extends AppCompatActivity {
                     String Letter_temp = Letter.get(j - 1);
                     Letter.set(j - 1, Letter.get(j));
                     Letter.set(j, Letter_temp);
+
+                    int temp_Y = avgY.get(j - 1);
+                    avgY.set(j - 1, avgY.get(j));
+                    avgY.set(j, temp_Y);
                     swapNeeded = true;
                 }
             }
@@ -373,3 +377,4 @@ public class Tesseract extends AppCompatActivity {
         }
     }
 }
+
