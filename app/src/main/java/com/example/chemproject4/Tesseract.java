@@ -1,8 +1,5 @@
 package com.example.chemproject4;
 
-import android.content.Context;
-import android.media.Image;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -13,7 +10,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,33 +17,27 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.content.res.AssetManager;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.Delayed;
-import java.util.AbstractList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.lang.StrictMath.abs;
 
 public class Tesseract extends AppCompatActivity {
 
@@ -176,6 +166,19 @@ public class Tesseract extends AppCompatActivity {
         }
 
         Bubblesort(avgX, letter, avgY);
+        int max = Collections.max(avgY);
+        int min = Collections.min(avgY);
+        int middle  = (int) (max+min)/2;
+        ArrayList<Boolean> Middle_element  = new ArrayList<Boolean>();
+
+        for (int i = 0; i<avgY.size(); i++){
+            if(abs(middle - avgY.get(i)) < 30) {
+                Middle_element.add(true);
+            } else {
+                Middle_element.add(false);
+            }
+        }
+
         Log.d("bubble sort", "occrued");
         for(int i = 0; i<avgX.size(); i++){
             Log.d("avgx", String.valueOf(avgX.get(i)));
@@ -198,10 +201,62 @@ public class Tesseract extends AppCompatActivity {
         if (avgX.get(i) - avgX.get(i - 1) >= 30) {
             grouping.add(i);
         }
+        if (grouping.get(0) == 0) {
+            if (grouping.size() > 1) {
+                grouping.remove(0);
+                Middle_element.set(0, false);
+            }
+        }
+        int len = grouping.size();
+        if (grouping.get(len - 1) - grouping.get(len - 2) == 1) {
+            grouping.set(len - 2, grouping.get(len - 1));
+            int indexTemp = grouping.get(len - 1);
+            grouping.remove(len - 1);
+            Middle_element.set(indexTemp, false);
+        }
 
         for(int k = 0; k<grouping.size(); k++){
             Log.d("grouping", String.valueOf(grouping.get(k)));
         }
+
+        for(int m = 0; m<grouping.size(); m++){
+            int leftIdx = 0;
+            if (m > 0) {
+                leftIdx = grouping.get(m - 1) + 1;
+            }
+
+            String equation = "";
+            for (int n = leftIdx; n <= grouping.get(m); n++) {
+                if (Middle_element.get(n) == true) {
+                    equation = letter.get(n);
+                    break;
+                }
+            }
+            Map<String, Integer> counting = new HashMap<>();
+           for (int n = leftIdx; n <= grouping.get(m); n++) {
+               if (Middle_element.get(n) == true) {
+                   continue;
+               }
+               String strTemp = letter.get(n);
+               Integer val = counting.get(strTemp);
+               if(val != null){
+                   counting.put(strTemp, new Integer(val + 1));
+               }else{
+                   counting.put(strTemp,1);
+               }
+           }
+
+            for (Map.Entry<String, Integer> entry : counting.entrySet())
+            {
+                equation = equation + entry.getKey() + entry.getValue().toString();
+                //System.out.println(entry.getKey() + "/" + entry.getValue());
+            }
+
+            Log.d("equation", equation);
+        }
+
+       // Map<Character, Integer> counting = new HashMap<Character, Integer>();
+
     }
     public void Bubblesort(ArrayList<Integer> avgX, ArrayList<String> Letter , ArrayList<Integer> avgY ) {
         int i = 0, n = avgX.size();
