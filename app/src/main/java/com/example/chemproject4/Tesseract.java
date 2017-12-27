@@ -199,71 +199,87 @@ public class Tesseract extends AppCompatActivity {
         Log.d("string without spaces", str);
         String str_splitted[] = str.split(" ");
         Log.d("length", String.valueOf(str_splitted.length));
-        int itemDeleted = 0;
+        int itemDeleted = 0;/// Used to check number of elements deleted later on.
         for (int i = 0; i < (str_splitted.length - 1); i += 5) { /// gets an array of letters and the avg x value of letter/
             boolean checker = true;
             Log.d("i", String.valueOf(i));
             Log.d("", str_splitted[i]);
 
             char ascLetter = str_splitted[i].charAt(0);
-            if (ascLetter == 'I' || ascLetter == '=' || ascLetter == '-' || ascLetter == '/' || ascLetter == '\\') {
+
+            if (ascLetter == 'I' || ascLetter == '=' || ascLetter == '-' || ascLetter == '/' || ascLetter == '\\') { //removes the placation from the text by not adding it to the new array
                 checker = false;
                 itemDeleted++;
             }
+
             if (checker == true) {
                 letter.add(str_splitted[i]);
-                avgX.add((Integer.parseInt(str_splitted[i + 1]) + Integer.parseInt(str_splitted[i + 3])) / 2);
+                avgX.add((Integer.parseInt(str_splitted[i + 1]) + Integer.parseInt(str_splitted[i + 3])) / 2); // Gets the average x value of the letter as each letter has a diffrent width, so it gives centre line
                 avgY.add((Integer.parseInt(str_splitted[i + 2]) + Integer.parseInt(str_splitted[i + 4])) / 2);
-                Log.d("Letter", String.valueOf(letter.get((i / 5) - itemDeleted)));
+                Log.d("Letter", String.valueOf(letter.get((i / 5) - itemDeleted))); // -itemdeleted, so that the elments position are not out of range of array.
                 Log.d("avgX", String.valueOf(avgX.get((i / 5) - itemDeleted)));
-
             }
         }
 
         Bubblesort(avgX, letter, avgY);
         int max = Collections.max(avgY);
         int min = Collections.min(avgY);
-        int middle = (int) (max + min) / 2;
-        ArrayList<Boolean> Middle_element = new ArrayList<Boolean>();
+        int middle = (max + min) / 2;
+        ArrayList<Boolean> Middle_element = new ArrayList<>();
 
         for (int i = 0; i < avgY.size(); i++) {
-            if (abs(middle - avgY.get(i)) < 30) {
-                Middle_element.add(true);
+            if (abs(middle - avgY.get(i)) < 30) { // Purpose to get the elements that are in the middle row.
+                                                    // 30 allows for variation of centre of Y axis
+                Middle_element.add(true);           // true means that that element is the middle one
             } else {
                 Middle_element.add(false);
             }
         }
 
         Log.d("bubble sort", "occrued");
-        for (int i = 0; i < avgX.size(); i++) {
+
+       /* for (int i = 0; i < avgX.size(); i++) {
             Log.d("avgx", String.valueOf(avgX.get(i)));
         }
+
         for (int i = 0; i < letter.size(); i++) {
             Log.d("letter", letter.get(i));
         }
-        //Log.d("avgx", String.valueOf(avgX));
-        //Log.d("letter", String.valueOf(letter));
 
+        Log.d("avgx", String.valueOf(avgX));
+        Log.d("letter", String.valueOf(letter));
+        */
         ArrayList<Integer> grouping = new ArrayList<>();
-        for (int i = 0; i < letter.size() - 1; i++) {
+
+        for (int i = 0; i < letter.size() - 1; i++) {   //it groups the elements based on their x axis.
+                                                        // it checks if the elements have similar x values.
             if (avgX.get(i + 1) - avgX.get(i) > 30) {
 
-                grouping.add(i);
+                grouping.add(i);                        //It adds the elements to the group.
 
             }
 
         }
+
         int i = letter.size() - 1;
-        if (avgX.get(i) - avgX.get(i - 1) >= 30) {
+        if (avgX.get(i) - avgX.get(i - 1) >= 30) { // if there are side elements they will add it to the same group.i
+
             grouping.add(i);
+
         }
+
         if (grouping.get(0) == 0) {
-            if (grouping.size() > 1) {
+
+            if (grouping.size() > 1) {  // checks if the first group has only one element, this means that it is connected to element.
+                                        // thus it should be named after the middle group of the element it is connected it to.
+
                 grouping.remove(0);
                 Middle_element.set(0, false);
+
             }
         }
         int len = grouping.size();
+
         if (grouping.get(len - 1) - grouping.get(len - 2) == 1) {
             grouping.set(len - 2, grouping.get(len - 1));
             int indexTemp = grouping.get(len - 1);
@@ -276,6 +292,7 @@ public class Tesseract extends AppCompatActivity {
         }
 
         String equation = "";
+
         for (int m = 0; m < grouping.size(); m++) {
             int leftIdx = 0;
             if (m > 0) {
@@ -283,13 +300,16 @@ public class Tesseract extends AppCompatActivity {
             }
 
             String subEquation = "";
+
             for (int n = leftIdx; n <= grouping.get(m); n++) {
                 if (Middle_element.get(n) == true) {
                     subEquation = letter.get(n);
                     break;
                 }
             }
+
             Map<String, Integer> counting = new HashMap<>();
+
             for (int n = leftIdx; n <= grouping.get(m); n++) {
                 if (Middle_element.get(n) == true) {
                     continue;
@@ -304,8 +324,9 @@ public class Tesseract extends AppCompatActivity {
             }
 
             Integer hCount = counting.get("H");
+
             if (hCount != null) {
-                if (hCount > 0) {
+                if (hCount > 0) {// In the naming order a chemical formula, carbon is first, then hydrogen then alphabeitcall. Thus it removes H  and assumes that if C appears it is in the centre.
                     subEquation = subEquation + "H" + String.valueOf(hCount);
                 }
                 for (Map.Entry<String, Integer> entry : counting.entrySet()) {
@@ -374,6 +395,11 @@ public class Tesseract extends AppCompatActivity {
         } catch (IOException ioe) {
             Log.e("File Read Error: ", "" + ioe.getMessage());
         }
+
+    }
+
+    private void bitmap_editor() { /// This will set the contrast of the bitmap to max, to help the ocr engine.
+
 
     }
 
