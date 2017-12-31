@@ -1,76 +1,65 @@
 package com.example.chemproject4;
 
-import android.support.v7.app.AppCompatActivity;
-
 /*
  * Created by nima_on 13/11/2017. :)
  */
+
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
-
-import android.os.Environment;
 import android.os.Bundle;
-
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.HashMap;
-import android.util.Log;
-
-import java.lang.Boolean;
-import java.text.SimpleDateFormat;
-
-
-import android.content.res.AssetManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.opencsv.CSVReader;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-
-
-
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static java.lang.StrictMath.abs;
 
 public class Tesseract extends AppCompatActivity {
 
+    static final int REQUEST_TAKE_PHOTO = 1;
+    public String mCurrentPhotoPath;
+    public Bitmap Bitmap_Molecule;
     //String[]  letter = new String[10000];
     //int[]     avgX   = new int[10000];
     ArrayList<String> letter = new ArrayList<>(); // Array List used for storing the letters, average x+y values.
     ArrayList<Integer> avgX = new ArrayList<>();  // Array List used as it is dynamic, instally it starts with 10 blank elements.
     ArrayList<Integer> avgY = new ArrayList<>();
-    ArrayList<String>  error_messages = new ArrayList<>();
-    Map<String, String> formulaToName = new HashMap<>();
-
-    boolean photo_taken = false;
     ///ImageView mImageView;
-
+    ArrayList<String> error_messages = new ArrayList<>();
+    Map<String, String> formulaToName = new HashMap<>();
+    boolean photo_taken = false;
     Bitmap image;
     private TessBaseAPI mTess;
-    static final int REQUEST_TAKE_PHOTO = 1;
-    public String mCurrentPhotoPath;
     private ImageView ImageView_molecule;
-    public Bitmap Bitmap_Molecule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,20 +83,13 @@ public class Tesseract extends AppCompatActivity {
         });
         Take_Photo_Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                try {
-                    dispatchTakePictureIntent();
-                }
-                catch (Exception e) {
-                    error_message_writer("ERROR COCE 2, error in taking photo using camera, please try again"); // todo, error code 2, problem with taking photo function.
-                }
-
+                dispatchTakePictureIntent();
             }
         });
         //Define image,
         try {
             image = BitmapFactory.decodeResource(getResources(), R.drawable.ethene);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             error_message_writer(" error code 1, error in setting the test image"); ///todo error code 1, fix: re install app.
         }
 
@@ -116,12 +98,11 @@ public class Tesseract extends AppCompatActivity {
         mCurrentPhotoPath = getFilesDir() + "/tesseract/";
 
         checkFile(new File(mCurrentPhotoPath + "tessdata/"));
-        try{
+        try {
             mTess = new TessBaseAPI();
             mTess.init(mCurrentPhotoPath, language); // initializes the Api
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             error_message_writer("error code 2 , error in starting the OCR engine."); /// todo error code 2, error in starting ocr engine
 
@@ -130,6 +111,7 @@ public class Tesseract extends AppCompatActivity {
 
 
     public void processImage() throws IOException {
+
         letter.clear();
         avgY.clear();
         avgX.clear();
@@ -148,10 +130,9 @@ public class Tesseract extends AppCompatActivity {
         }
 
         String OCRresult;
-        try{
+        try {
             mTess.setImage(image);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             error_message_writer("ERROR CODE 5, error setting image. Image hasnt been accessed "); //todo Error code 5, can not set image.
         }
 
@@ -163,17 +144,21 @@ public class Tesseract extends AppCompatActivity {
 
     }
 
-    public void error_message_writer(String error){
+    public void error_message_writer(String error) {
         Date currentTime = Calendar.getInstance().getTime();
         String error_message_to_write = error + "occured at" + currentTime;
         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
-        error_messages.add(error_message_to_write);
         Log.d("error", error);
+
+
+        error_messages.add(error_message_to_write);
     }
-    private void error_to_text_file(){
+
+    private void error_to_text_file(String error_to_write) {
 
 
     }
+
     private void checkFile(File dir) { /// Checks if the tess two directory exists on phone before copying data to it, if doesnt exist will create directory.
 
 
@@ -229,7 +214,7 @@ public class Tesseract extends AppCompatActivity {
 
         for (int i = 0; i < avgY.size(); i++) {
             if (abs(middle - avgY.get(i)) < 30) { // Purpose to get the elements that are in the middle row.
-                                                    // 30 allows for variation of centre of Y axis
+                // 30 allows for variation of centre of Y axis
                 Middle_element.add(true);           // true means that that element is the middle one
             } else {
                 Middle_element.add(false);
@@ -252,7 +237,7 @@ public class Tesseract extends AppCompatActivity {
         ArrayList<Integer> grouping = new ArrayList<>();
 
         for (int i = 0; i < letter.size() - 1; i++) {   //it groups the elements based on their x axis.
-                                                        // it checks if the elements have similar x values.
+            // it checks if the elements have similar x values.
             if (avgX.get(i + 1) - avgX.get(i) > 30) {
 
                 grouping.add(i);                        //It adds the elements to the group.
@@ -271,7 +256,7 @@ public class Tesseract extends AppCompatActivity {
         if (grouping.get(0) == 0) {
 
             if (grouping.size() > 1) {  // checks if the first group has only one element, this means that it is connected to element.
-                                        // thus it should be named after the middle group of the element it is connected it to.
+                // thus it should be named after the middle group of the element it is connected it to.
 
                 grouping.remove(0);
                 Middle_element.set(0, false);
@@ -372,7 +357,7 @@ public class Tesseract extends AppCompatActivity {
             }
             if (!more_swaps) {
                 Log.d("bubble sort", "AvgX, AvgY, letters have been sorted");
-                more_swaps  = false;
+                more_swaps = false;
             }
             i++;
         }
@@ -398,9 +383,43 @@ public class Tesseract extends AppCompatActivity {
 
     }
 
-    private void bitmap_editor() { /// This will set the contrast of the bitmap to max, to help the ocr engine.
+    public Bitmap adjustedContrast(Bitmap Bitmap_to_edit) {
+        // image size
+        int bitmap_height = Bitmap_to_edit.getHeight();
+        int bitmap_width = Bitmap_to_edit.getWidth();
+        // create output bitmap
+        Bitmap bmOut = Bitmap.createBitmap(bitmap_width, bitmap_height, Bitmap_to_edit.getConfig());
+        // color information
+        int Alpha;
+        int pixel;
+        // get contrast value
+        double contrast = Math.pow((200) / 100, 2);
+        int[] Colours = new int[3];
+        // scan through all pixels
+        for (int x = 0; x < bitmap_width; ++x) {
+            for (int y = 0; y < bitmap_height; ++y) {
+                // get pixel color
+                pixel = Bitmap_to_edit.getPixel(x, y);
+                Colours[0] = Color.red(pixel); // array position for red pixel value
+                Alpha = Color.alpha(pixel);
+                Colours[1] = Color.blue(pixel);
+                Colours[2] = Color.green(pixel);
+                // apply filter contrast for every channel R, G, B
+                for (int i = 0; i < 3; i++) {
+                    Colours[i] = (int) (((((Colours[i] / 255.0) - 0.5) * contrast) + 0.5) * 255.0);
+                    if (Colours[i] < 0) {
+                        Colours[i] = 0;
+                    } else if (Colours[i] > 255) {
+                        Colours[i] = 255;
+                    }
+                }
 
+                // set new pixel color to output bitmap
+                bmOut.setPixel(x, y, Color.argb(Alpha, Colours[0], Colours[2], Colours[1]));
+            }
 
+        }
+        return bmOut;
     }
 
     private void copyFiles() {
@@ -454,9 +473,7 @@ public class Tesseract extends AppCompatActivity {
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                Toast.makeText(getApplicationContext(), photoURI.toString(), Toast.LENGTH_LONG).show();
                 photo_taken = true;
-
             }
         } else {
             error_message_writer("Error code 6, no camera app installed in computer"); // todo error code 6, Error code to be made, no camera app installed in computer
@@ -472,14 +489,13 @@ public class Tesseract extends AppCompatActivity {
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = null;
         try {
-             image = File.createTempFile(
+            image = File.createTempFile(
               /* prefix */  imageFileName,
               /* type */   ".jpg",
          /* directory */       storageDir
             );
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             error_message_writer("ERROR CODE 6, error in creating photo file"); // todo, error code 6, error in cretaing photo file.
         }
 
@@ -490,8 +506,7 @@ public class Tesseract extends AppCompatActivity {
     }
 
 
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){ // Checks if camera intent is completed, then it will compress bitmap.
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { // Checks if camera intent is completed, then it will compress bitmap.
         // Check which request we're responding to
         if (requestCode == REQUEST_TAKE_PHOTO) {
             // Make sure the request was successful
@@ -512,23 +527,24 @@ public class Tesseract extends AppCompatActivity {
         if (Bitmap_Molecule != null) { // Checks if bitmap has been created,
             int target_width = ImageView_molecule.getMeasuredWidth(); /// No error
             int target_height = ImageView_molecule.getMeasuredHeight(); /// No error
-            Log.d("Test Width", "" + target_width); // for error checking
-            Log.d("Test Height", Integer.toString(target_height));
-            Log.d("image file", mCurrentPhotoPath);
-            Log.d("image", Bitmap_Molecule.toString());
-            Log.d("btimap", "bitmap created");
+//            Log.d("Test Width", "" + target_width); // for error checking
+//            Log.d("Test Height", Integer.toString(target_height));
+//            Log.d("image file", mCurrentPhotoPath);
+//            Log.d("image", Bitmap_Molecule.toString());
+//            Log.d("btimap", "bitmap created");
 
             Bitmap Bitmap_Molecule_compressed = Bitmap.createScaledBitmap(Bitmap_Molecule, target_width, target_height, false);
             Toast.makeText(getApplicationContext(), "Photo successfully compressed!", Toast.LENGTH_SHORT).show();
+            Bitmap_Molecule_compressed = adjustedContrast(Bitmap_Molecule_compressed);
             ImageView_molecule.setImageBitmap(Bitmap_Molecule_compressed);
+
 
         } else {
             Log.d("bitmap", "not created!");
-            Toast.makeText(getApplicationContext(), "Bitmap not created!, error to be created", Toast.LENGTH_SHORT).show();
+            error_message_writer("error code 6, Bitmap has not been properly created"); //todo, error code 6. Bitmap not created.
 
 
             ///image = Bitmap_Molecule_compressed;
         }
     }
-
 }

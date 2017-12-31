@@ -12,18 +12,19 @@
         android:layout_height="160dp"
         android:background="#e4e3e3">
 
+
         <TextView
             android:id="@+id/OCRTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="224dp"
             android:background="#dedede"
             android:text="OCR Text will appear here"
             android:textColor="#a3a3a3"
-            android:textSize="18dp" />
-
-
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -39,38 +40,42 @@
         android:clickable="true">
 
         <Button
-            android:id="@+id/OCRbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/Capture_Photo"
-            android:layout_centerHorizontal="true"
-            android:clickable="true"
-            android:text="Run recogntion on Molecule"
-            android:textSize="18dp" />
-
-        <Button
             android:id="@+id/Capture_Photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:onClick="dispatchTakePictureIntent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="46dp"
+            android:layout_marginStart="108dp"
+            android:clickable="true"
+            android:focusable="true"
             android:text="Take Photo Of Next Molecule" />
+
+        <Button
+            android:id="@+id/OCRbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/Capture_Photo"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="7dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Run recogntion on Molecule"
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/ImageContainer"
         android:layout_width="match_parent"
-        android:layout_height="332dp"
+        android:layout_height="169dp"
         android:background="#ffffff">
 
         <ImageView
             android:id="@+id/mImageView"
             android:layout_width="match_parent"
             android:layout_height="332dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="45dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
             android:src="@drawable/ethene" />
 
     </RelativeLayout>
