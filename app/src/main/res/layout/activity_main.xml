@@ -1,83 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <RelativeLayout
-        android:id="@+id/OCRTextContainer"
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:background="#e4e3e3">
 
+    <ImageView
+        android:id="@+id/mImageView"
+        android:layout_width="0dp"
+        android:layout_height="141dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ethene" />
 
-        <TextView
-            android:id="@+id/OCRTextView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="26dp"
-            android:layout_marginTop="224dp"
-            android:background="#dedede"
-            android:text="OCR Text will appear here"
-            android:textColor="#a3a3a3"
-            android:textSize="18sp" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/OCRButtonContainer"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/OCRbutton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/OCRTextView"
-        android:layout_alignBottom="@+id/OCRTextView"
-        android:layout_alignEnd="@+id/OCRTextView"
-        android:layout_marginEnd="0dp"
-        android:layout_weight="1.26"
-        android:background="#167865"
-        android:clickable="true">
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Run Recogonntion"
+        app:layout_constraintEnd_toStartOf="@+id/Capture_Photo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mImageView" />
 
-        <Button
-            android:id="@+id/Capture_Photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="46dp"
-            android:layout_marginStart="108dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="Take Photo Of Next Molecule" />
+    <Button
+        android:id="@+id/Capture_Photo"
+        android:layout_width="0dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="8dp"
+        android:text="Take photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mImageView" />
 
-        <Button
-            android:id="@+id/OCRbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/Capture_Photo"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="7dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="Run recogntion on Molecule"
-            android:textSize="18sp" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/Chemical_Name"
+        android:layout_width="305dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Chemical name"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Capture_Photo" />
 
-    <RelativeLayout
-        android:id="@+id/ImageContainer"
-        android:layout_width="match_parent"
-        android:layout_height="169dp"
-        android:background="#ffffff">
+    <TextView
+        android:id="@+id/Formula"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Chemical Formula"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Chemical_Name" />
 
-        <ImageView
-            android:id="@+id/mImageView"
-            android:layout_width="match_parent"
-            android:layout_height="332dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ethene" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -30,4 +30,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     implementation files('libs/jxl.jar')
     implementation files('libs/opencsv-3.10.jar')
+    implementation 'com.google.android.gms:play-services-ads:11.8.0'
 }

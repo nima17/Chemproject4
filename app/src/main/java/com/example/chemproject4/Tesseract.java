@@ -58,6 +58,9 @@ public class Tesseract extends AppCompatActivity {
     Map<String, String> formulaToName = new HashMap<>();
     boolean photo_taken = false;
     Bitmap image;
+
+
+
     private TessBaseAPI mTess;
     private ImageView ImageView_molecule;
 
@@ -139,8 +142,7 @@ public class Tesseract extends AppCompatActivity {
         OCRresult = mTess.getUTF8Text();
         string_to_array();
 
-        TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
-        OCRTextView.setText(OCRresult);
+
 
     }
 
@@ -178,11 +180,13 @@ public class Tesseract extends AppCompatActivity {
     }
 
     private void string_to_array() throws IOException {
-
-        String str = mTess.getBoxText(1);
-        str = str.replaceAll(" 1\n", " ");// Removes the last 1 from each line of the string
-        Log.d("string without spaces", str);
-        String str_splitted[] = str.split(" ");
+        TextView OCRTextView = (TextView) findViewById(R.id.Chemical_Name);
+        TextView formula_textview = (TextView) findViewById(R.id.Formula);
+        String image_boxtext = mTess.getBoxText(1);
+        String formula;
+        image_boxtext = image_boxtext.replaceAll(" 1\n", " ");// Removes the last 1 from each line of the string
+        Log.d("string without spaces", image_boxtext);
+        String str_splitted[] = image_boxtext.split(" ");
         Log.d("length", String.valueOf(str_splitted.length));
         int itemDeleted = 0;/// Used to check number of elements deleted later on.
         for (int i = 0; i < (str_splitted.length - 1); i += 5) { /// gets an array of letters and the avg x value of letter/
@@ -234,6 +238,7 @@ public class Tesseract extends AppCompatActivity {
         Log.d("avgx", String.valueOf(avgX));
         Log.d("letter", String.valueOf(letter));
         */
+
         ArrayList<Integer> grouping = new ArrayList<>();
 
         for (int i = 0; i < letter.size() - 1; i++) {   //it groups the elements based on their x axis.
@@ -331,7 +336,10 @@ public class Tesseract extends AppCompatActivity {
         // Map<Character, Integer> counting = new HashMap<Character, Integer>();
         workbook_searcher();
 
-        Log.d("name", formulaToName.get(equation));
+        formula = "chemical formula:" + formulaToName.get(equation);
+        OCRTextView.setText(formula);
+        equation  = "chemical equation:" + equation;
+        formula_textview.setText(equation);
     }
 
     public void Bubblesort(ArrayList<Integer> avgX, ArrayList<String> Letter, ArrayList<Integer> avgY) {
