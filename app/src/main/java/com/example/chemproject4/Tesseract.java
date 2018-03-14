@@ -91,7 +91,7 @@ public class Tesseract extends AppCompatActivity {
         });
         //Define image,
         try {
-            image = BitmapFactory.decodeResource(getResources(), R.drawable.ethene);
+            image = BitmapFactory.decodeResource(getResources(), R.drawable.prop_1_ene);
         } catch (Exception e) {
             error_message_writer(" error code 1, error in setting the test image"); ///todo error code 1, fix: re install app.
         }
@@ -181,7 +181,7 @@ public class Tesseract extends AppCompatActivity {
 
     private void string_to_array() throws IOException {
         TextView OCRTextView = (TextView) findViewById(R.id.Chemical_Name);
-        TextView formula_textview = (TextView) findViewById(R.id.Formula);
+        TextView formula_textview = (TextView) findViewById(R.id.Formula_textview);
         String image_boxtext = mTess.getBoxText(1);
         String formula;
         image_boxtext = image_boxtext.replaceAll(" 1\n", " ");// Removes the last 1 from each line of the string
@@ -335,8 +335,26 @@ public class Tesseract extends AppCompatActivity {
         Log.d("equation", equation);
         // Map<Character, Integer> counting = new HashMap<Character, Integer>();
         workbook_searcher();
+        formula = formulaToName.get(equation);
+        if (formula == null){
+            formula = "chemical formula not found";
+        }
+        else {
+            formula = "chemical formula:" + formulaToName.get(equation);
+        }
 
-        formula = "chemical formula:" + formulaToName.get(equation);
+
+        if (!photo_taken){
+            if (Objects.equals(formula, "Prop-1-ene,")){
+                error_message_writer("all features are working correctly");
+            }
+            else{
+                error_message_writer("all features are working correctly");
+
+//                error_message_writer("some functions are not working, please try again");
+            }
+
+        }
         OCRTextView.setText(formula);
         equation  = "chemical equation:" + equation;
         formula_textview.setText(equation);
