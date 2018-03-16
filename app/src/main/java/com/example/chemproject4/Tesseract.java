@@ -1,7 +1,7 @@
 package com.example.chemproject4;
 
 /*
- * Created by nima_on 13/11/2017. :)
+ * Last edit 15/03/2018
  */
 
 import android.content.Intent;
