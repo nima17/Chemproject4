@@ -4,7 +4,9 @@ package com.example.chemproject4;
  * Last edit 15/03/2018
  */
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +15,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -58,6 +62,7 @@ public class Tesseract extends AppCompatActivity {
     Map<String, String> formulaToName = new HashMap<>();
     boolean photo_taken = false;
     Bitmap image;
+    boolean app_failed = false;
 
 
 
@@ -72,7 +77,9 @@ public class Tesseract extends AppCompatActivity {
 
         final Button Process_Image_Button = (Button) findViewById(R.id.OCRbutton); /// used to declare the button listiner.
         final Button Take_Photo_Button = (Button) findViewById(R.id.Capture_Photo);
-
+        final Button ErrorViewButton = (Button) findViewById(R.id.ErrorViewButton);
+        final Button Backbutton  = (Button) findViewById(R.id.backbutton);
+        final Button to_errors_button = (Button) findViewById(R.id.ErrorpageViewerButton);
         Process_Image_Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -89,11 +96,22 @@ public class Tesseract extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
+        ErrorViewButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {load_errors(); }
+        });
+        Backbutton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {go_back(); }
+        });
+        to_errors_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {go_to_errors();}
+
+        });
         //Define image,
         try {
             image = BitmapFactory.decodeResource(getResources(), R.drawable.prop_1_ene);
         } catch (Exception e) {
             error_message_writer(" error code 1, error in setting the test image"); ///todo error code 1, fix: re install app.
+
         }
 
         //initialize Tesseract API
@@ -108,7 +126,6 @@ public class Tesseract extends AppCompatActivity {
         } catch (Exception e) {
 
             error_message_writer("error code 2 , error in starting the OCR engine."); /// todo error code 2, error in starting ocr engine
-
         }
     }
 
@@ -139,27 +156,37 @@ public class Tesseract extends AppCompatActivity {
             error_message_writer("ERROR CODE 5, error setting image. Image hasnt been accessed "); //todo Error code 5, can not set image.
         }
 
+
         OCRresult = mTess.getUTF8Text();
         string_to_array();
 
 
 
     }
+    public void go_to_errors(){
+        setContentView(R.layout.errorpage);
 
+    }
+    public void go_back(){
+         setContentView(R.layout.activity_main);
+    }
+    public void load_errors(){
+        TextView error_textview = (TextView) findViewById(R.id.Errortextview);
+        for(int i = 0; i < error_messages.size(); i++){
+            error_textview.append(error_messages.get(i));
+        }
+    }
     public void error_message_writer(String error) {
         Date currentTime = Calendar.getInstance().getTime();
         String error_message_to_write = error + "occured at" + currentTime;
         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
         Log.d("error", error);
-
-
+        app_failed  = true;
         error_messages.add(error_message_to_write);
-    }
-
-    private void error_to_text_file(String error_to_write) {
-
 
     }
+
+
 
     private void checkFile(File dir) { /// Checks if the tess two directory exists on phone before copying data to it, if doesnt exist will create directory.
 
@@ -349,7 +376,7 @@ public class Tesseract extends AppCompatActivity {
                 error_message_writer("all features are working correctly");
             }
             else{
-                error_message_writer("all features are working correctly");
+                error_message_writer("something went wrong, check error menu");
 
 //                error_message_writer("some functions are not working, please try again");
             }

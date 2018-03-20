@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chemproject4">
-    <uses-feature android:name="android.hardware.camera" /> // request the  camera
-        android:required="true" />
+    <uses-feature android:name="android.hardware.camera" /> // request the  camera android:required="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
