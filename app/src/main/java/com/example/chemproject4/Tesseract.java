@@ -4,7 +4,6 @@ package com.example.chemproject4;
  * Last edit 15/03/2018
  */
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -55,11 +54,10 @@ public class Tesseract extends AppCompatActivity {
     ArrayList<Integer> avgX = new ArrayList<>();  // Array List used as it is dynamic, instally it starts with 10 blank elements.
     ArrayList<Integer> avgY = new ArrayList<>();
     ///ImageView mImageView;
-   Map<String, String> formulaToName = new HashMap<>();
+    Map<String, String> formulaToName = new HashMap<>();
     boolean photo_taken = false;
     Bitmap image;
     boolean app_failed = false;
-
 
 
     private TessBaseAPI mTess;
@@ -77,11 +75,7 @@ public class Tesseract extends AppCompatActivity {
         Process_Image_Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                try {
-                    processImage();
-                } catch (IOException e) {
-                    error_message_writer("error in processing the image");
-                }
+                processImage();
 
             }
         });
@@ -92,7 +86,9 @@ public class Tesseract extends AppCompatActivity {
         });
 
         to_errors_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {go_to_errors();}
+            public void onClick(View v) {
+                go_to_errors();
+            }
 
         });
         //Define image,
@@ -119,7 +115,7 @@ public class Tesseract extends AppCompatActivity {
     }
 
 
-    public void processImage() throws IOException {
+    public void processImage() {
 
         letter.clear();
         avgY.clear();
@@ -150,15 +146,15 @@ public class Tesseract extends AppCompatActivity {
         string_to_array();
 
 
-
     }
-    public void go_to_errors(){
+
+    public void go_to_errors() {
         Intent change_activity_intent = new Intent(this, Error_page_activity.class);
         startActivity(change_activity_intent);
 
     }
 
-    public void error_message_writer(String error)  {
+    public void error_message_writer(String error) {
         Date currentTime = Calendar.getInstance().getTime();
         String error_message_to_write = error + "occured at" + currentTime;
         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
@@ -167,7 +163,6 @@ public class Tesseract extends AppCompatActivity {
         error_page_act.errors_add(error_message_to_write);
         app_failed = true;
     }
-
 
 
     private void checkFile(File dir) { /// Checks if the tess two directory exists on phone before copying data to it, if doesnt exist will create directory.
@@ -345,19 +340,17 @@ public class Tesseract extends AppCompatActivity {
         // Map<Character, Integer> counting = new HashMap<Character, Integer>();
         workbook_searcher();
         formula = formulaToName.get(equation);
-        if (formula == null){
+        if (formula == null) {
             formula = "chemical formula not found";
-        }
-        else {
+        } else {
             formula = "chemical formula:" + formulaToName.get(equation);
         }
 
 
-        if (!photo_taken){
-            if (Objects.equals(formula, "Prop-1-ene,")){
+        if (!photo_taken) {
+            if (Objects.equals(formula, "Prop-1-ene,")) {
                 error_message_writer("all features are working correctly");
-            }
-            else{
+            } else {
                 error_message_writer("something went wrong, check error menu");
 
 //                error_message_writer("some functions are not working, please try again");
@@ -365,7 +358,7 @@ public class Tesseract extends AppCompatActivity {
 
         }
         OCRTextView.setText(formula);
-        equation  = "chemical equation:" + equation;
+        equation = "chemical equation:" + equation;
         formula_textview.setText(equation);
     }
 
@@ -493,14 +486,7 @@ public class Tesseract extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
-            try {
-                photoFile = create_photo_file();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                Log.d("Photo file creation", "error occured while making photo file for photo intent");
-                Toast.makeText(getApplicationContext(), "Error code to be made", Toast.LENGTH_SHORT).show();
-
-            }
+            photoFile = create_photo_file();
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
@@ -525,9 +511,9 @@ public class Tesseract extends AppCompatActivity {
         File image = null;
         try {
             image = File.createTempFile(
-              /* prefix */  imageFileName,
-              /* type */   ".jpg",
-         /* directory */       storageDir
+                    /* prefix */  imageFileName,
+                    /* type */   ".jpg",
+                    /* directory */       storageDir
             );
 
         } catch (Exception e) {
@@ -535,6 +521,7 @@ public class Tesseract extends AppCompatActivity {
         }
 
         // Save  file:  the is path used with ACTION_VIEW intents
+
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
 
