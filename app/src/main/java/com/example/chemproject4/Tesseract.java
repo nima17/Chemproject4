@@ -4,9 +4,8 @@ package com.example.chemproject4;
  * Last edit 15/03/2018
  */
 
-import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,8 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -58,8 +55,7 @@ public class Tesseract extends AppCompatActivity {
     ArrayList<Integer> avgX = new ArrayList<>();  // Array List used as it is dynamic, instally it starts with 10 blank elements.
     ArrayList<Integer> avgY = new ArrayList<>();
     ///ImageView mImageView;
-    ArrayList<String> error_messages = new ArrayList<>();
-    Map<String, String> formulaToName = new HashMap<>();
+   Map<String, String> formulaToName = new HashMap<>();
     boolean photo_taken = false;
     Bitmap image;
     boolean app_failed = false;
@@ -77,8 +73,6 @@ public class Tesseract extends AppCompatActivity {
 
         final Button Process_Image_Button = (Button) findViewById(R.id.OCRbutton); /// used to declare the button listiner.
         final Button Take_Photo_Button = (Button) findViewById(R.id.Capture_Photo);
-        final Button ErrorViewButton = (Button) findViewById(R.id.ErrorViewButton);
-        final Button Backbutton  = (Button) findViewById(R.id.backbutton);
         final Button to_errors_button = (Button) findViewById(R.id.ErrorpageViewerButton);
         Process_Image_Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -96,12 +90,7 @@ public class Tesseract extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
-        ErrorViewButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {load_errors(); }
-        });
-        Backbutton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {go_back(); }
-        });
+
         to_errors_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {go_to_errors();}
 
@@ -164,26 +153,19 @@ public class Tesseract extends AppCompatActivity {
 
     }
     public void go_to_errors(){
-        setContentView(R.layout.errorpage);
+        Intent change_activity_intent = new Intent(this, Error_page_activity.class);
+        startActivity(change_activity_intent);
 
     }
-    public void go_back(){
-         setContentView(R.layout.activity_main);
-    }
-    public void load_errors(){
-        TextView error_textview = (TextView) findViewById(R.id.Errortextview);
-        for(int i = 0; i < error_messages.size(); i++){
-            error_textview.append(error_messages.get(i));
-        }
-    }
-    public void error_message_writer(String error) {
+
+    public void error_message_writer(String error)  {
         Date currentTime = Calendar.getInstance().getTime();
         String error_message_to_write = error + "occured at" + currentTime;
         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
         Log.d("error", error);
-        app_failed  = true;
-        error_messages.add(error_message_to_write);
-
+        Error_page_activity error_page_act = new Error_page_activity();
+        error_page_act.errors_add(error_message_to_write);
+        app_failed = true;
     }
 
 
@@ -206,7 +188,7 @@ public class Tesseract extends AppCompatActivity {
 
     }
 
-    private void string_to_array() throws IOException {
+    private void string_to_array() {
         TextView OCRTextView = (TextView) findViewById(R.id.Chemical_Name);
         TextView formula_textview = (TextView) findViewById(R.id.Formula_textview);
         String image_boxtext = mTess.getBoxText(1);
@@ -416,7 +398,7 @@ public class Tesseract extends AppCompatActivity {
         }
     }
 
-    private void workbook_searcher() throws IOException {
+    private void workbook_searcher() {
         try {
             AssetManager mng = getApplicationContext().getAssets();
             InputStream is = mng.open("database.csv");
@@ -534,7 +516,7 @@ public class Tesseract extends AppCompatActivity {
     }
 
 
-    public File create_photo_file() throws IOException {
+    public File create_photo_file() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
