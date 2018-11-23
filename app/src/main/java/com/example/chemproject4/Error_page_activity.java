@@ -30,11 +30,12 @@ public class Error_page_activity extends AppCompatActivity {
     }
 
     public void load_errors() {
-       TextView error_textview = (TextView) findViewById(R.id.Errortextview);
+       TextView error_text_view = findViewById(R.id.error_text_view);
+       error_text_view.append("error log start");
         for(int i = 0; i < error_messages.size(); i++){
-            error_textview.append(error_messages.get(i));
+            error_text_view.setText(error_messages.get(i));
         }
-
+        error_text_view.setText("error log loaded");
 
     }
 
